@@ -1,0 +1,26 @@
+.verticalSection1{
+  width: 20%;
+}
+.verticalSection2{
+  width: 80%;
+}
+.game{
+  display: flex;
+}
+.pallete{
+  width: 26px;
+  height: 16px;
+}
+.p1{
+  background: red;
+}
+.p2{
+  background-color: blue;
+  color: white;
+}
+.p3{
+  background-color: green;
+}
+.p4{
+  background-color: yellow;
+}

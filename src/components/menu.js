@@ -18,6 +18,7 @@ function Menu(props) {
         >
           <option value={2}>2 Friends</option>
           <option value={3}>3 Friends</option>
+          <option value={4}>4 Friends</option>
         </select>
       </div>
       <div>
