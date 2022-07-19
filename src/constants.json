@@ -2,5 +2,10 @@
   "GAME": "Chain Reaction",
   "DEVELOPER": "Ankush Patil",
   "GRID_SIZE": "8",
-  "PLAYER_COUNT": "2"
+  "PLAYER_COUNT": "2",
+  "PLAYER_ONE": "red",
+  "PLAYER_TWO": "blue",
+  "PLAYER_THREE": "green",
+  "PLAYER_FOUR": "yellow",
+  "NO_PLAYER": "white"
 }
