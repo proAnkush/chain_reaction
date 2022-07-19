@@ -1,15 +1,44 @@
 import React, { useEffect, useState } from "react";
 import "../styles/game.css";
+import { v4 as uuidv4 } from "uuid";
 import Navbar from "./navbar";
 import constants from "../constants.json";
 import "../styles/board.css";
 import Legend from "./legend";
 import Board from "./board";
 function Game(props) {
+  const generateEmptyMatrix = () => {
+    let matrix = Array(constants.GRID_SIZE);
+    for (let i = 0; i < constants.GRID_SIZE; i++) {
+      let row = Array(constants.GRID_SIZE);
+      for (let j = 0; j < constants.GRID_SIZE; j++) {
+        row[j] = {
+          occupiedBy: constants.NO_PLAYER,
+          tapCount: 0,
+        };
+      }
+      matrix[i] = row;
+    }
+    return matrix;
+  };
   const [playerCount, setPlayerCount] = props.match.params.playerCount;
-  const [matrix, setMatrix] = useState(Array(constants.GRID_SIZE));
+  const [guiBoard, setGuiBoard] = useState();
+
+  const [activePlayer, setActivePlayers] = [
+    constants[constants.PLAYER_MAP[props.match.params.playerCount]],
+  ];
+  const [matrix, setMatrix] = useState(() => generateEmptyMatrix());
+  const currentPlayer = constants.PLAYER_ONE;
   const move = (i, j) => {
+    let tempMatrix = [...matrix];
+
+    console.log(tempMatrix === matrix);
+    console.log(tempMatrix == matrix);
+    console.log(i, j);
     if (corners(i, j)) {
+      if (poppable(true, false, false, i, j)) {
+        console.log("poppable");
+      }
       console.log("corner");
       return;
     }
@@ -19,12 +48,67 @@ function Game(props) {
       }
       console.log("corner row");
     }
+    console.log(tempMatrix);
+    console.log(matrix);
+    tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
+
+    console.log(tempMatrix[i][j] == matrix[i][j]);
+    setGuiBoard(createBoard(matrix));
+    setMatrix(tempMatrix);
+    checkEndGame(tempMatrix);
   };
+
+  const checkEndGame = (tempMatrix) => {
+    for (let i = 0; i < tempMatrix.length; i++) {
+      for (let j = 0; j < tempMatrix.length; j++) {
+        // if(tempMatrix[i][j].occupiedBy == constants.PLAYER_ONE)
+      }
+    }
+  };
+
+  const createBoard = (tempMatrix) => {
+    console.log("MATRIX");
+    if (
+      tempMatrix === null ||
+      tempMatrix === undefined ||
+      tempMatrix.length != constants.GRID_SIZE
+    ) {
+      console.log(typeof tempMatrix);
+      return;
+    }
+    console.log(tempMatrix);
+    let guiMatrix = [];
+    for (let i = 0; i < tempMatrix.length; i++) {
+      let row = tempMatrix[i];
+      if (row.length !== 8) return;
+      console.log(row);
+      let guiRow = (
+        <div>
+          {row.map((item, j) => (
+            <button
+              key={uuidv4()}
+              onClick={() => move(i, j)}
+              className={item.occupiedBy}
+            >
+              {item.tapCount}
+            </button>
+          ))}
+        </div>
+      );
+      console.log(guiRow);
+      guiMatrix.push(guiRow);
+    }
+    // setGuiBoard(guiMatrix);
+    console.log(guiMatrix[0]);
+    return guiMatrix;
+  };
+
   const corners = (i, j) => {
     if (i == 0 && j == 0) return true;
-    if (i == 0 && j == constants.GRID_SIZE) return true;
-    if (i == constants.GRID_SIZE) return true;
-    if (i == constants.GRID_SIZE && j == constants.GRID_SIZE) return true;
+    if (i == 0 && j == constants.GRID_SIZE - 1) return true;
+    if (i == constants.GRID_SIZE - 1 && j == 0) return true;
+    if (i == constants.GRID_SIZE - 1 && j == constants.GRID_SIZE - 1)
+      return true;
     return false;
   };
   const poppable = (isCorner, isCornerRow, isMiddle, i, j) => {
@@ -54,17 +138,9 @@ function Game(props) {
   };
   useEffect(() => {
     console.log(matrix);
-    for (let i = 0; i < constants.GRID_SIZE; i++) {
-      let row = Array(constants.GRID_SIZE);
-      for (let j = 0; j < constants.GRID_SIZE; j++) {
-        row[j] = {
-          occupiedBy: constants.NO_PLAYER,
-          tapCount: 0,
-        };
-      }
-      matrix[i] = row;
-    }
 
+    setGuiBoard(createBoard(matrix));
+    console.log(matrix);
     return () => {
       console.log("unmount game");
     };
@@ -74,8 +150,8 @@ function Game(props) {
     if (
       i == 0 ||
       j == 0 ||
-      i == constants.GRID_SIZE ||
-      j == constants.GRID_SIZE
+      i == constants.GRID_SIZE - 1 ||
+      j == constants.GRID_SIZE - 1
     ) {
       return true;
     }
@@ -85,14 +161,16 @@ function Game(props) {
   return (
     <div>
       <Navbar screenName={playerCount + "P Match"} />
-      {/* <Board size={constants.GRID_SIZE} playerCount={parseInt(playerCount)} />
-       */}
       <div className="game">
         <div className="verticalSection1">
           <Legend playerCount={playerCount} />
         </div>
         <div className="verticalSection2">
-          <Board matrix={matrix} move={move} />
+          <Board
+            matrix={matrix}
+            createBoard={createBoard}
+            guiBoard={guiBoard}
+          />
         </div>
       </div>
     </div>
