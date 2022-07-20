@@ -11,16 +11,24 @@
   width: 26px;
   height: 16px;
 }
-.p1{
+.p1, .red{
   background: red;
 }
-.p2{
-  background-color: blue;
+.p2, .blue{
+  background: blue;
   color: white;
 }
-.p3{
-  background-color: green;
+.p3, .green{
+  background: green;
 }
-.p4{
-  background-color: yellow;
+.p4, .yellow{
+  background: yellow;
+}
+.white{
+  background: white;
+}
+.cell{
+  width: 60px;
+  height: 60px;
+  border-color: var(--BOARD_BORDER_COLOR);
 }

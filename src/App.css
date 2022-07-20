@@ -11,3 +11,6 @@
 .zp{
   padding: 0px !important;
 }
+:root{
+  --BOARD_BORDER_COLOR: red;
+}

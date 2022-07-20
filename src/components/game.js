@@ -22,84 +22,122 @@ function Game(props) {
     return matrix;
   };
   const [playerCount, setPlayerCount] = props.match.params.playerCount;
+
   const [guiBoard, setGuiBoard] = useState();
 
-  const [activePlayer, setActivePlayers] = [
-    constants[constants.PLAYER_MAP[props.match.params.playerCount]],
-  ];
+  const [activePlayers, setActivePlayers] = useState(
+    constants.PLAYER_COLOR_MAP[playerCount]
+  );
   const [matrix, setMatrix] = useState(() => generateEmptyMatrix());
-  const currentPlayer = constants.PLAYER_ONE;
+  // const [currentPlayer, setCurrentPlayer] = useState(0);
   const move = (i, j) => {
     let tempMatrix = [...matrix];
+    let tempActivePlayers = activePlayers;
+    // let tempActivePlayers = [...activePlayers];
+    let currentPlayer = tempActivePlayers.shift();
 
-    console.log(tempMatrix === matrix);
-    console.log(tempMatrix == matrix);
-    console.log(i, j);
     if (corners(i, j)) {
       if (poppable(true, false, false, i, j)) {
         console.log("poppable");
       }
-      console.log("corner");
-      return;
+      // pop()
     }
     if (cornerRow(i, j)) {
       if (poppable(false, true, false, i, j)) {
         console.log("poppable");
       }
-      console.log("corner row");
+      // pop()
     }
-    console.log(tempMatrix);
-    console.log(matrix);
     tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
-
-    console.log(tempMatrix[i][j] == matrix[i][j]);
-    setGuiBoard(createBoard(matrix));
+    tempActivePlayers.push(currentPlayer);
+    if (currentPlayer == undefined) {
+      return;
+    }
+    tempMatrix[i][j].occupiedBy = currentPlayer;
+    // let cells = document.getElementsByClassName("cells");
+    let r = document.querySelector(":root");
+    r.style.setProperty("--BOARD_BORDER_COLOR", tempActivePlayers[0]);
+    // for (let i = 0; i < cells.length; i++) {
+    //   let element = cells[i];
+    //   element.classList.remove(tempActivePlayers[0] + "_border");
+    //   element.classList.add(tempActivePlayers[1] + "_border");
+    // }
     setMatrix(tempMatrix);
-    checkEndGame(tempMatrix);
+    setActivePlayers(tempActivePlayers);
+    setGuiBoard(createBoard(matrix));
+
+    // if (currentPlayer == activePlayers.length - 1) {
+    //   setCurrentPlayer(0);
+    // } else {
+    //   setCurrentPlayer((temp) => temp + 1);
+    // }
+    // if(allPlayersMoved){
+    //   checkEndGame(tempMatrix);
+    // }
   };
 
   const checkEndGame = (tempMatrix) => {
+    let playerColors = [...activePlayers];
+    let playerOccupiedArea = {};
+    for (let i = 0; i < playerColors.length; i++) {
+      let color = playerColors[i];
+      playerOccupiedArea[color] = 0;
+    }
     for (let i = 0; i < tempMatrix.length; i++) {
       for (let j = 0; j < tempMatrix.length; j++) {
         // if(tempMatrix[i][j].occupiedBy == constants.PLAYER_ONE)
+        if (playerColors[tempMatrix[i][j].occupiedBy]) {
+          playerOccupiedArea[tempMatrix[i][j]] =
+            playerOccupiedArea[tempMatrix[i][j]] + 1;
+        }
       }
     }
+    for (let i = 0; i < playerColors.length; i++) {
+      let color = playerColors[i];
+      if (playerOccupiedArea[color] == 0) {
+        setActivePlayers(activePlayers.filter((player) => player !== color));
+      }
+    }
+    if (activePlayers.length == 1) {
+      endGame(activePlayers[0]);
+    }
+    return false;
+  };
+
+  const endGame = (winningColor) => {
+    // game ended
+    localStorage.setItem("winner", winningColor);
+    window.href = "/final";
   };
 
   const createBoard = (tempMatrix) => {
-    console.log("MATRIX");
     if (
       tempMatrix === null ||
       tempMatrix === undefined ||
       tempMatrix.length != constants.GRID_SIZE
     ) {
-      console.log(typeof tempMatrix);
       return;
     }
-    console.log(tempMatrix);
     let guiMatrix = [];
     for (let i = 0; i < tempMatrix.length; i++) {
       let row = tempMatrix[i];
       if (row.length !== 8) return;
-      console.log(row);
       let guiRow = (
         <div>
           {row.map((item, j) => (
             <button
-              key={uuidv4()}
+              key={uuidv4().toString()}
               onClick={() => move(i, j)}
-              className={item.occupiedBy}
+              className={item.occupiedBy + " cell"}
             >
               {item.tapCount}
             </button>
           ))}
         </div>
       );
-      console.log(guiRow);
       guiMatrix.push(guiRow);
     }
     // setGuiBoard(guiMatrix);
-    console.log(guiMatrix[0]);
     return guiMatrix;
   };
 
@@ -137,10 +175,8 @@ function Game(props) {
     return false;
   };
   useEffect(() => {
-    console.log(matrix);
-
     setGuiBoard(createBoard(matrix));
-    console.log(matrix);
+
     return () => {
       console.log("unmount game");
     };

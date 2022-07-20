@@ -11,9 +11,34 @@
   "TWO_PLAYERS": ["red", "blue"],
   "THREE_PLAYERS": ["red", "blue", "green"],
   "FOUR_PLAYERS": ["red", "blue", "green", "yellow"],
-  "PLAYER_MAP": {
+  "PLAYER_COUNT_MAP": {
     "2": "TWO_PLAYERS",
     "3": "THREE_PLAYERS",
     "4": "FOUR_PLAYERS"
+  },
+  "PLAYER_COLOR_MAP": {
+    "2": ["red", "blue"],
+    "3": ["red", "blue", "green"],
+    "4": ["red", "blue", "green", "yellow"]
+  },
+  "red": {
+    "NAME": "PLAYER_ONE",
+    "COLOR": "RED",
+    "INDEX": 0
+  },
+  "blue": {
+    "NAME": "PLAYER_TWO",
+    "COLOR": "BLUE",
+    "INDEX": 1
+  },
+  "green": {
+    "NAME": "PLAYER_THREE",
+    "COLOR": "GREEN",
+    "INDEX": 2
+  },
+  "yellow": {
+    "NAME": "PLAYER_FOUR",
+    "COLOR": "YELLOW",
+    "INDEX": 3
   }
 }
