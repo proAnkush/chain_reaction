@@ -22,6 +22,7 @@ function Game(props) {
     return matrix;
   };
   const [playerCount, setPlayerCount] = props.match.params.playerCount;
+  let firstCycle = 0;
 
   const [guiBoard, setGuiBoard] = useState();
 
@@ -31,6 +32,14 @@ function Game(props) {
   const [matrix, setMatrix] = useState(() => generateEmptyMatrix());
   // const [currentPlayer, setCurrentPlayer] = useState(0);
   const move = (i, j) => {
+    if (
+      matrix[i][j].occupiedBy != activePlayers[0] &&
+      matrix[i][j].occupiedBy != "white"
+    ) {
+      // only allow clicking on white or self occupied tiles
+
+      return;
+    }
     let tempMatrix = [...matrix];
     let tempActivePlayers = activePlayers;
     // let tempActivePlayers = [...activePlayers];
@@ -50,64 +59,69 @@ function Game(props) {
     }
     tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
     tempActivePlayers.push(currentPlayer);
-    if (currentPlayer == undefined) {
-      return;
-    }
     tempMatrix[i][j].occupiedBy = currentPlayer;
     // let cells = document.getElementsByClassName("cells");
     let r = document.querySelector(":root");
     r.style.setProperty("--BOARD_BORDER_COLOR", tempActivePlayers[0]);
-    // for (let i = 0; i < cells.length; i++) {
-    //   let element = cells[i];
-    //   element.classList.remove(tempActivePlayers[0] + "_border");
-    //   element.classList.add(tempActivePlayers[1] + "_border");
-    // }
     setMatrix(tempMatrix);
     setActivePlayers(tempActivePlayers);
     setGuiBoard(createBoard(matrix));
-
-    // if (currentPlayer == activePlayers.length - 1) {
-    //   setCurrentPlayer(0);
-    // } else {
-    //   setCurrentPlayer((temp) => temp + 1);
-    // }
-    // if(allPlayersMoved){
-    //   checkEndGame(tempMatrix);
-    // }
+    checkEndGame(tempMatrix);
+    // localStorage.setItem("matrix", matrix)
   };
 
   const checkEndGame = (tempMatrix) => {
+    if (firstCycle < playerCount) {
+      console.log(firstCycle);
+      // avoid overflow of cycle count for long game
+      firstCycle++;
+      return;
+    }
+    console.log("check end game");
     let playerColors = [...activePlayers];
     let playerOccupiedArea = {};
+    let tempActivePlayers = [...activePlayers];
     for (let i = 0; i < playerColors.length; i++) {
+      console.log("1");
       let color = playerColors[i];
       playerOccupiedArea[color] = 0;
     }
+    console.log(playerOccupiedArea);
     for (let i = 0; i < tempMatrix.length; i++) {
       for (let j = 0; j < tempMatrix.length; j++) {
         // if(tempMatrix[i][j].occupiedBy == constants.PLAYER_ONE)
-        if (playerColors[tempMatrix[i][j].occupiedBy]) {
-          playerOccupiedArea[tempMatrix[i][j]] =
-            playerOccupiedArea[tempMatrix[i][j]] + 1;
+        if (playerColors[tempMatrix[i][j].occupiedBy] != "white") {
+          playerOccupiedArea[tempMatrix[i][j].occupiedBy] =
+            playerOccupiedArea[tempMatrix[i][j].occupiedBy] + 1;
         }
       }
     }
+    console.log(playerOccupiedArea);
+    console.log("2");
     for (let i = 0; i < playerColors.length; i++) {
       let color = playerColors[i];
       if (playerOccupiedArea[color] == 0) {
-        setActivePlayers(activePlayers.filter((player) => player !== color));
+        tempActivePlayers = tempActivePlayers.filter(
+          (player) => player !== color
+        );
       }
     }
-    if (activePlayers.length == 1) {
-      endGame(activePlayers[0]);
+    console.log(tempActivePlayers);
+    console.log("2");
+
+    setActivePlayers(tempActivePlayers);
+    if (tempActivePlayers.length == 1) {
+      endGame(tempActivePlayers[0]);
     }
     return false;
   };
 
   const endGame = (winningColor) => {
     // game ended
+    console.log(winningColor);
+    console.log("winner");
     localStorage.setItem("winner", winningColor);
-    window.href = "/final";
+    window.location.href = "/final";
   };
 
   const createBoard = (tempMatrix) => {

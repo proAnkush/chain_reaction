@@ -5,6 +5,11 @@ function Final(props) {
   return (
     <div>
       <Navbar screenName="Finish" />
+      <div className="final_msgBox">
+        <span className="final_winnerName">
+          {localStorage.getItem("winner")}
+        </span>{" "}
+      </div>
     </div>
   );
 }

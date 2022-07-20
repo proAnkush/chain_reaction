@@ -1,0 +1,10 @@
+.final_winnerName{
+  font-size: 640px;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.final_winMsg{
+  align-self: center;
+  font-size: 30px;
+}

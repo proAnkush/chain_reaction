@@ -13,6 +13,7 @@
 }
 .p1, .red{
   background: red;
+  color: white;
 }
 .p2, .blue{
   background: blue;
@@ -30,5 +31,6 @@
 .cell{
   width: 60px;
   height: 60px;
-  border-color: var(--BOARD_BORDER_COLOR);
+  border-color: white;
+  margin: 3px;
 }
