@@ -1,3 +1,4 @@
 .board{
   background-color: var(--BOARD_BORDER_COLOR);
+  padding: 80px 0px 80px 0px;
 }

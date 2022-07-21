@@ -1,11 +1,12 @@
-.verticalSection1{
+.verticalSection2{
   width: 20%;
 }
-.verticalSection2{
+.verticalSection1{
   width: 80%;
 }
 .game{
   display: flex;
+  margin: 0px 20% 0px 20%;
 }
 .pallete{
   width: 26px;
@@ -21,6 +22,7 @@
 }
 .p3, .green{
   background: green;
+  color: white;
 }
 .p4, .yellow{
   background: yellow;

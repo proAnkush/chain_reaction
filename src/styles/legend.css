@@ -3,7 +3,6 @@
 }
 .legend{
   display: flex;
-  justify-content: center;
 }
 .legend_table{
   width: 150px !important;

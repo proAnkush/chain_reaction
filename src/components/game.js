@@ -6,12 +6,13 @@ import constants from "../constants.json";
 import "../styles/board.css";
 import Legend from "./legend";
 import Board from "./board";
+import Headsup from "./headsup";
 function Game(props) {
   const generateEmptyMatrix = () => {
-    let matrix = Array(constants.GRID_SIZE);
-    for (let i = 0; i < constants.GRID_SIZE; i++) {
-      let row = Array(constants.GRID_SIZE);
-      for (let j = 0; j < constants.GRID_SIZE; j++) {
+    let matrix = Array(gridSize);
+    for (let i = 0; i < gridSize; i++) {
+      let row = Array(gridSize);
+      for (let j = 0; j < gridSize; j++) {
         row[j] = {
           occupiedBy: constants.NO_PLAYER,
           tapCount: 0,
@@ -21,7 +22,13 @@ function Game(props) {
     }
     return matrix;
   };
-  const [playerCount, setPlayerCount] = props.match.params.playerCount;
+  const [headsupMessage, setHeadsupMessage] = useState("You is a Idiat?");
+  const [playerCount, setPlayerCount] = useState(
+    parseInt(localStorage.getItem("playerCount")) || 2
+  );
+  const [gridSize, setGridSize] = useState(
+    parseInt(localStorage.getItem("gridSize")) || 8
+  );
   let firstCycle = 0;
 
   const [guiBoard, setGuiBoard] = useState();
@@ -37,7 +44,9 @@ function Game(props) {
       matrix[i][j].occupiedBy != "white"
     ) {
       // only allow clicking on white or self occupied tiles
-
+      setHeadsupMessage(
+        "You can only click on your occupied tile or white tile."
+      );
       return;
     }
     let tempMatrix = [...matrix];
@@ -120,14 +129,14 @@ function Game(props) {
     if (
       tempMatrix === null ||
       tempMatrix === undefined ||
-      tempMatrix.length != constants.GRID_SIZE
+      tempMatrix.length != gridSize
     ) {
       return;
     }
     let guiMatrix = [];
     for (let i = 0; i < tempMatrix.length; i++) {
       let row = tempMatrix[i];
-      if (row.length !== parseInt(constants.GRID_SIZE)) return;
+      if (row.length !== parseInt(gridSize)) return;
       let guiRow = (
         <div>
           {row.map((item, j) => (
@@ -153,14 +162,13 @@ function Game(props) {
 
   const isCorner = (i, j) => {
     if (i == 0 && j == 0) return true;
-    if (i == 0 && j == constants.GRID_SIZE - 1) return true;
-    if (i == constants.GRID_SIZE - 1 && j == 0) return true;
-    if (i == constants.GRID_SIZE - 1 && j == constants.GRID_SIZE - 1)
-      return true;
+    if (i == 0 && j == gridSize - 1) return true;
+    if (i == gridSize - 1 && j == 0) return true;
+    if (i == gridSize - 1 && j == gridSize - 1) return true;
     return false;
   };
   const poppable = (i, j, tempMatrix) => {
-    if (i < 0 || i >= constants.GRID_SIZE || j < 0 || j > constants.GRID_SIZE) {
+    if (i < 0 || i >= gridSize || j < 0 || j > gridSize) {
       return false;
     }
     if (tempMatrix[i] == undefined || tempMatrix[i][j] == undefined) {
@@ -207,23 +215,13 @@ function Game(props) {
   }, [guiBoard]);
 
   const isCornerRow = (i, j) => {
-    if (
-      i == 0 ||
-      j == 0 ||
-      i == constants.GRID_SIZE - 1 ||
-      j == constants.GRID_SIZE - 1
-    ) {
+    if (i == 0 || j == 0 || i == gridSize - 1 || j == gridSize - 1) {
       return true;
     }
     return false;
   };
   const pop = (i, j, tempMatrix, currentPlayer) => {
-    if (
-      i < 0 ||
-      i >= constants.GRID_SIZE ||
-      j < 0 ||
-      j >= constants.GRID_SIZE
-    ) {
+    if (i < 0 || i >= gridSize || j < 0 || j >= gridSize) {
       console.log("beyond the boundaries");
       return;
     }
@@ -237,9 +235,9 @@ function Game(props) {
 
       // up j > 0
       pop(i, j - 1, tempMatrix, currentPlayer);
-      // right i+1 < constants.grid_size
+      // right i+1 < gridSize
       pop(i + 1, j, tempMatrix, currentPlayer);
-      // down  j+1 < constants.grid_size
+      // down  j+1 < gridSize
       pop(i, j + 1, tempMatrix, currentPlayer);
       // left i > 0
       pop(i - 1, j, tempMatrix, currentPlayer);
@@ -250,14 +248,15 @@ function Game(props) {
       <Navbar screenName={playerCount + "P Match"} />
       <div className="game">
         <div className="verticalSection1">
-          <Legend playerCount={playerCount} />
-        </div>
-        <div className="verticalSection2">
           <Board
             matrix={matrix}
             createBoard={createBoard}
             guiBoard={guiBoard}
           />
+          <Headsup message={headsupMessage} />
+        </div>
+        <div className="verticalSection2">
+          <Legend playerCount={playerCount} />
         </div>
       </div>
     </div>
