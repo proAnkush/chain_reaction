@@ -22,6 +22,7 @@ function Game(props) {
     }
     return matrix;
   };
+
   const [headsupMessage, setHeadsupMessage] = useState("You is a Idiat?");
   const [playerCount, setPlayerCount] = useState(
     parseInt(localStorage.getItem("playerCount")) || 2
@@ -33,11 +34,11 @@ function Game(props) {
 
   const [guiBoard, setGuiBoard] = useState();
 
-  const [activePlayers, setActivePlayers] = useState(
-    constants.PLAYER_COLOR_MAP[playerCount]
-  );
+  let activePlayers = constants.PLAYER_COLOR_MAP[playerCount];
+
   const [matrix, setMatrix] = useState(() => generateEmptyMatrix());
   // const [currentPlayer, setCurrentPlayer] = useState(0);
+
   const move = (i, j) => {
     if (
       matrix[i][j].occupiedBy != activePlayers[0] &&
@@ -50,25 +51,46 @@ function Game(props) {
       return;
     }
     let tempMatrix = [...matrix];
-    let tempActivePlayers = activePlayers;
     // let tempActivePlayers = [...activePlayers];
-    let currentPlayer = tempActivePlayers.shift();
-
+    console.log(activePlayers);
+    let currentPlayer = activePlayers.shift();
+    // let currentPlayer = getNextActivePlayer();
+    activePlayers.push(currentPlayer);
+    console.log(currentPlayer);
+    console.log(activePlayers.length, activePlayers.length);
     if (poppable(i, j, tempMatrix)) {
       pop(i, j, tempMatrix, currentPlayer);
     } else {
       tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
       tempMatrix[i][j].occupiedBy = currentPlayer;
     }
-    tempActivePlayers.push(currentPlayer);
     // let cells = document.getElementsByClassName("cells");
-    let r = document.querySelector(":root");
-    r.style.setProperty("--BOARD_BORDER_COLOR", tempActivePlayers[0]);
     setMatrix(tempMatrix);
-    setActivePlayers(tempActivePlayers);
     setGuiBoard(createBoard(matrix));
     checkEndGame(tempMatrix);
+    // setActivePlayers(tempActivePlayers);
+
     // localStorage.setItem("matrix", matrix)
+    // (let tempActivePlayers = activePlayers;
+
+    // // let tempActivePlayers = [...activePlayers];
+    // console.log(tempActivePlayers);
+    // let currentPlayer = tempActivePlayers.shift();
+    // tempActivePlayers.push(currentPlayer);
+    // console.log(currentPlayer);
+    // if (poppable(i, j, tempMatrix)) {
+    //   pop(i, j, tempMatrix, currentPlayer);
+    // } else {
+    //   tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
+    //   tempMatrix[i][j].occupiedBy = currentPlayer;
+    // }
+    // // let cells = document.getElementsByClassName("cells");
+    // setMatrix(tempMatrix);
+    // setGuiBoard(createBoard(matrix));
+    // checkEndGame(tempMatrix, tempActivePlayers);
+    // // setActivePlayers(tempActivePlayers);
+
+    // // localStorage.setItem("matrix", matrix))
   };
 
   const checkEndGame = (tempMatrix) => {
@@ -76,18 +98,23 @@ function Game(props) {
       console.log(firstCycle);
       // avoid overflow of cycle count for long game
       firstCycle++;
-      return;
+      // set next player indicator
+      let r = document.querySelector(":root");
+      r.style.setProperty("--BOARD_BORDER_COLOR", activePlayers[0]);
+      return false;
     }
     console.log("check end game");
     let playerColors = [...activePlayers];
     let playerOccupiedArea = {};
-    let tempActivePlayers = [...activePlayers];
+    // let activePlayers = [...activePlayers];
+    // construct empty object of playername: 0
     for (let i = 0; i < playerColors.length; i++) {
       console.log("1");
       let color = playerColors[i];
       playerOccupiedArea[color] = 0;
     }
     console.log(playerOccupiedArea);
+    // fill the object with the count of tiles occupied by correlating player
     for (let i = 0; i < tempMatrix.length; i++) {
       for (let j = 0; j < tempMatrix.length; j++) {
         // if(tempMatrix[i][j].occupiedBy == constants.PLAYER_ONE)
@@ -102,19 +129,29 @@ function Game(props) {
     for (let i = 0; i < playerColors.length; i++) {
       let color = playerColors[i];
       if (playerOccupiedArea[color] == 0) {
-        tempActivePlayers = tempActivePlayers.filter(
-          (player) => player !== color
-        );
+        eliminatePlayer(color);
       }
     }
-    console.log(tempActivePlayers);
+    console.log(activePlayers);
     console.log("2");
 
-    setActivePlayers(tempActivePlayers);
-    if (tempActivePlayers.length == 1) {
-      endGame(tempActivePlayers[0]);
+    // setActivePlayers([...activePlayers]);
+    // set next player indicator
+    let r = document.querySelector(":root");
+    r.style.setProperty("--BOARD_BORDER_COLOR", activePlayers[0]);
+    if (activePlayers.length == 1) {
+      endGame(activePlayers[0]);
     }
     return false;
+  };
+
+  const eliminatePlayer = (color) => {
+    console.log(
+      "filter: ",
+      color,
+      activePlayers.filter((item) => item != color)
+    );
+    activePlayers = activePlayers.filter((item) => item != color);
   };
 
   const endGame = (winningColor) => {
@@ -203,16 +240,6 @@ function Game(props) {
       console.log("unmount game");
     };
   }, []);
-  useEffect(() => {
-    console.log("update MATRIX");
-
-    return () => {};
-  }, [matrix]);
-  useEffect(() => {
-    console.log("update GUI");
-
-    return () => {};
-  }, [guiBoard]);
 
   const isCornerRow = (i, j) => {
     if (i == 0 || j == 0 || i == gridSize - 1 || j == gridSize - 1) {
