@@ -7,35 +7,35 @@
   "PLAYER_TWO": "blue",
   "PLAYER_THREE": "green",
   "PLAYER_FOUR": "yellow",
+  "PLAYER_FIVE": "orange",
+  "PLAYER_SIX": "maroon",
+  "PLAYER_SEVEN": "cadetblue",
+  "PLAYER_EIGHT": "aqua",
   "NO_PLAYER": "white",
-  "PLAYER_COUNT_MAP": {
-    "2": "TWO_PLAYERS",
-    "3": "THREE_PLAYERS",
-    "4": "FOUR_PLAYERS"
-  },
+  "red": "PLAYER ONE",
+  "blue": "PLAYER TWO",
+  "green": "PLAYER THREE",
+  "yellow": "PLAYER FOUR",
+  "orange": "PLAYER FIVE",
+  "maroon": "PLAYER SIX",
+  "cadetblue": "PLAYER SEVEN",
+  "aqua": "PLAYER EIGHT",
   "PLAYER_COLOR_MAP": {
     "2": ["red", "blue"],
     "3": ["red", "blue", "green"],
-    "4": ["red", "blue", "green", "yellow"]
-  },
-  "red": {
-    "NAME": "PLAYER_ONE",
-    "COLOR": "RED",
-    "INDEX": 0
-  },
-  "blue": {
-    "NAME": "PLAYER_TWO",
-    "COLOR": "BLUE",
-    "INDEX": 1
-  },
-  "green": {
-    "NAME": "PLAYER_THREE",
-    "COLOR": "GREEN",
-    "INDEX": 2
-  },
-  "yellow": {
-    "NAME": "PLAYER_FOUR",
-    "COLOR": "YELLOW",
-    "INDEX": 3
+    "4": ["red", "blue", "green", "yellow"],
+    "5": ["red", "blue", "green", "yellow", "orange"],
+    "6": ["red", "blue", "green", "yellow", "orange", "maroon"],
+    "7": ["red", "blue", "green", "yellow", "orange", "maroon", "cadetblue"],
+    "8": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "orange",
+      "maroon",
+      "cadetblue",
+      "aqua"
+    ]
   }
 }

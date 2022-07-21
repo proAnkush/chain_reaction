@@ -4,6 +4,12 @@ import bootstrap from "bootstrap";
 import "../styles/menu.css";
 import constants from "../constants.json";
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -18,6 +24,7 @@ function Menu(props) {
     localStorage.setItem("gridSize", gridSize);
     window.location.href = "/game/" + playerCount;
   };
+  const [helpDialog, setHelpDialog] = useState(false);
   return (
     <div>
       <Navbar screenName="Menu" />
@@ -34,6 +41,10 @@ function Menu(props) {
             <MenuItem value={2}>2 Friends</MenuItem>
             <MenuItem value={3}>3 Friends</MenuItem>
             <MenuItem value={4}>4 Friends</MenuItem>
+            <MenuItem value={5}>5 Friends</MenuItem>
+            <MenuItem value={6}>6 Friends</MenuItem>
+            <MenuItem value={7}>7 Friends</MenuItem>
+            <MenuItem value={8}>8 Friends</MenuItem>
           </Select>
           <FormHelperText>Select total players</FormHelperText>
         </FormControl>
@@ -59,12 +70,58 @@ function Menu(props) {
         </FormControl>
       </div>
       <div>
-        <button className="btn btn-primary" onClick={() => startGame()}>
+        <button
+          style={{ marginRight: "20px" }}
+          className="btn btn-primary"
+          onClick={() => startGame()}
+        >
           Start Game
         </button>
+        {/* <div> */}
+        <Button variant="outlined" onClick={() => setHelpDialog(true)}>
+          Help
+        </Button>
+        <Dialog
+          open={helpDialog}
+          onClose={() => setHelpDialog(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"How To Play"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <em>
+                The objective of Chain Reaction is to take control of the board
+                by eliminating your opponents' orbs.
+                <br />
+              </em>{" "}
+              Players take it in turns to place occupy cells by their color.
+              Once a cell has reached critical number of taps, the cells explode
+              into the surrounding cells adding an extra count and claiming the
+              cell for the player. A player may only increase mass of their
+              color cell or in a blank cell. As soon as a player looses all
+              their cells they are out of the game.
+              <ul>
+                <li>Corner tiles explode after 2 clicks</li>
+                <li>Border tiles explode after 3 clicks</li>
+                <li>All other tiles explode after 4 clicks</li>
+              </ul>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="outlined"
+              onClick={() => setHelpDialog(false)}
+              autoFocus
+            >
+              I'm Ready
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* </div> */}
         <p className="zm" style={{ fontSize: "12px" }}>
           You are playing {constants.GAME} with {playerCount} Friends where
-          board size is {constants.GRID_SIZE}
+          board size is {gridSize}
         </p>
       </div>
     </div>

@@ -23,7 +23,7 @@ function Game(props) {
     return matrix;
   };
 
-  const [headsupMessage, setHeadsupMessage] = useState("You is a Idiat?");
+  const [headsupMessage, setHeadsupMessage] = useState("Best of Luck!");
   const [playerCount, setPlayerCount] = useState(
     parseInt(localStorage.getItem("playerCount")) || 2
   );
@@ -37,24 +37,20 @@ function Game(props) {
   let activePlayers = constants.PLAYER_COLOR_MAP[playerCount];
 
   const [matrix, setMatrix] = useState(() => generateEmptyMatrix());
-  // const [currentPlayer, setCurrentPlayer] = useState(0);
 
   const move = (i, j) => {
     if (
       matrix[i][j].occupiedBy != activePlayers[0] &&
       matrix[i][j].occupiedBy != "white"
     ) {
-      // only allow clicking on white or self occupied tiles
       setHeadsupMessage(
         "You can only click on your occupied tile or white tile."
       );
       return;
     }
     let tempMatrix = [...matrix];
-    // let tempActivePlayers = [...activePlayers];
     console.log(activePlayers);
     let currentPlayer = activePlayers.shift();
-    // let currentPlayer = getNextActivePlayer();
     activePlayers.push(currentPlayer);
     console.log(currentPlayer);
     console.log(activePlayers.length, activePlayers.length);
@@ -64,41 +60,15 @@ function Game(props) {
       tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
       tempMatrix[i][j].occupiedBy = currentPlayer;
     }
-    // let cells = document.getElementsByClassName("cells");
     setMatrix(tempMatrix);
     setGuiBoard(createBoard(matrix));
     checkEndGame(tempMatrix);
-    // setActivePlayers(tempActivePlayers);
-
-    // localStorage.setItem("matrix", matrix)
-    // (let tempActivePlayers = activePlayers;
-
-    // // let tempActivePlayers = [...activePlayers];
-    // console.log(tempActivePlayers);
-    // let currentPlayer = tempActivePlayers.shift();
-    // tempActivePlayers.push(currentPlayer);
-    // console.log(currentPlayer);
-    // if (poppable(i, j, tempMatrix)) {
-    //   pop(i, j, tempMatrix, currentPlayer);
-    // } else {
-    //   tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
-    //   tempMatrix[i][j].occupiedBy = currentPlayer;
-    // }
-    // // let cells = document.getElementsByClassName("cells");
-    // setMatrix(tempMatrix);
-    // setGuiBoard(createBoard(matrix));
-    // checkEndGame(tempMatrix, tempActivePlayers);
-    // // setActivePlayers(tempActivePlayers);
-
-    // // localStorage.setItem("matrix", matrix))
   };
 
   const checkEndGame = (tempMatrix) => {
     if (firstCycle < playerCount) {
       console.log(firstCycle);
-      // avoid overflow of cycle count for long game
       firstCycle++;
-      // set next player indicator
       let r = document.querySelector(":root");
       r.style.setProperty("--BOARD_BORDER_COLOR", activePlayers[0]);
       return false;
@@ -106,18 +76,14 @@ function Game(props) {
     console.log("check end game");
     let playerColors = [...activePlayers];
     let playerOccupiedArea = {};
-    // let activePlayers = [...activePlayers];
-    // construct empty object of playername: 0
     for (let i = 0; i < playerColors.length; i++) {
       console.log("1");
       let color = playerColors[i];
       playerOccupiedArea[color] = 0;
     }
     console.log(playerOccupiedArea);
-    // fill the object with the count of tiles occupied by correlating player
     for (let i = 0; i < tempMatrix.length; i++) {
       for (let j = 0; j < tempMatrix.length; j++) {
-        // if(tempMatrix[i][j].occupiedBy == constants.PLAYER_ONE)
         if (playerColors[tempMatrix[i][j].occupiedBy] != "white") {
           playerOccupiedArea[tempMatrix[i][j].occupiedBy] =
             playerOccupiedArea[tempMatrix[i][j].occupiedBy] + 1;
@@ -135,8 +101,6 @@ function Game(props) {
     console.log(activePlayers);
     console.log("2");
 
-    // setActivePlayers([...activePlayers]);
-    // set next player indicator
     let r = document.querySelector(":root");
     r.style.setProperty("--BOARD_BORDER_COLOR", activePlayers[0]);
     if (activePlayers.length == 1) {
@@ -146,18 +110,10 @@ function Game(props) {
   };
 
   const eliminatePlayer = (color) => {
-    console.log(
-      "filter: ",
-      color,
-      activePlayers.filter((item) => item != color)
-    );
     activePlayers = activePlayers.filter((item) => item != color);
   };
 
   const endGame = (winningColor) => {
-    // game ended
-    console.log(winningColor);
-    console.log("winner");
     localStorage.setItem("winner", winningColor);
     window.location.href = "/final";
   };
@@ -193,7 +149,6 @@ function Game(props) {
       );
       guiMatrix.push(guiRow);
     }
-    // setGuiBoard(guiMatrix);
     return guiMatrix;
   };
 
@@ -209,8 +164,6 @@ function Game(props) {
       return false;
     }
     if (tempMatrix[i] == undefined || tempMatrix[i][j] == undefined) {
-      console.log(i, j);
-      console.log(tempMatrix);
       return false;
     }
     if (isCorner(i, j)) {
@@ -249,7 +202,6 @@ function Game(props) {
   };
   const pop = (i, j, tempMatrix, currentPlayer) => {
     if (i < 0 || i >= gridSize || j < 0 || j >= gridSize) {
-      console.log("beyond the boundaries");
       return;
     }
     if (!poppable(i, j, tempMatrix)) {
@@ -260,13 +212,9 @@ function Game(props) {
       tempMatrix[i][j].tapCount = 0;
       tempMatrix[i][j].occupiedBy = constants.NO_PLAYER;
 
-      // up j > 0
       pop(i, j - 1, tempMatrix, currentPlayer);
-      // right i+1 < gridSize
       pop(i + 1, j, tempMatrix, currentPlayer);
-      // down  j+1 < gridSize
       pop(i, j + 1, tempMatrix, currentPlayer);
-      // left i > 0
       pop(i - 1, j, tempMatrix, currentPlayer);
     }
   };
@@ -279,6 +227,7 @@ function Game(props) {
             matrix={matrix}
             createBoard={createBoard}
             guiBoard={guiBoard}
+            elevation={3}
           />
           <Headsup message={headsupMessage} />
         </div>

@@ -27,6 +27,22 @@
 .p4, .yellow{
   background: yellow;
 }
+.p5, .orange{
+  background: orange;
+}
+/* "orange",
+      "maroon",
+      "aqua" */
+.p6, .maroon{
+  background: maroon;
+  color: white;
+}
+.p7, .cadetblue{
+  background: cadetblue;
+}
+.p8, .aqua{
+  background: aqua;
+}
 .white{
   background: white;
 }
