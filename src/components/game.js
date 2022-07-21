@@ -45,21 +45,13 @@ function Game(props) {
     // let tempActivePlayers = [...activePlayers];
     let currentPlayer = tempActivePlayers.shift();
 
-    if (corners(i, j)) {
-      if (poppable(true, false, false, i, j)) {
-        console.log("poppable");
-      }
-      // pop()
+    if (poppable(i, j, tempMatrix)) {
+      pop(i, j, tempMatrix, currentPlayer);
+    } else {
+      tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
+      tempMatrix[i][j].occupiedBy = currentPlayer;
     }
-    if (cornerRow(i, j)) {
-      if (poppable(false, true, false, i, j)) {
-        console.log("poppable");
-      }
-      // pop()
-    }
-    tempMatrix[i][j].tapCount = matrix[i][j].tapCount + 1;
     tempActivePlayers.push(currentPlayer);
-    tempMatrix[i][j].occupiedBy = currentPlayer;
     // let cells = document.getElementsByClassName("cells");
     let r = document.querySelector(":root");
     r.style.setProperty("--BOARD_BORDER_COLOR", tempActivePlayers[0]);
@@ -135,14 +127,18 @@ function Game(props) {
     let guiMatrix = [];
     for (let i = 0; i < tempMatrix.length; i++) {
       let row = tempMatrix[i];
-      if (row.length !== 8) return;
+      if (row.length !== parseInt(constants.GRID_SIZE)) return;
       let guiRow = (
         <div>
           {row.map((item, j) => (
             <button
               key={uuidv4().toString()}
               onClick={() => move(i, j)}
-              className={item.occupiedBy + " cell"}
+              className={
+                item.occupiedBy +
+                " cell" +
+                (poppable(i, j, tempMatrix) ? " poppable" : "")
+              }
             >
               {item.tapCount}
             </button>
@@ -155,7 +151,7 @@ function Game(props) {
     return guiMatrix;
   };
 
-  const corners = (i, j) => {
+  const isCorner = (i, j) => {
     if (i == 0 && j == 0) return true;
     if (i == 0 && j == constants.GRID_SIZE - 1) return true;
     if (i == constants.GRID_SIZE - 1 && j == 0) return true;
@@ -163,30 +159,34 @@ function Game(props) {
       return true;
     return false;
   };
-  const poppable = (isCorner, isCornerRow, isMiddle, i, j) => {
-    if (isCorner) {
-      if (matrix[i][j].tapCount == 1) {
+  const poppable = (i, j, tempMatrix) => {
+    if (i < 0 || i >= constants.GRID_SIZE || j < 0 || j > constants.GRID_SIZE) {
+      return false;
+    }
+    if (tempMatrix[i] == undefined || tempMatrix[i][j] == undefined) {
+      console.log(i, j);
+      console.log(tempMatrix);
+      return false;
+    }
+    if (isCorner(i, j)) {
+      if (tempMatrix[i][j].tapCount == 1) {
         return true;
       } else {
         return false;
       }
     }
-    if (isCornerRow) {
-      if (matrix[i][j].tapCount == 2) {
+    if (isCornerRow(i, j)) {
+      if (tempMatrix[i][j].tapCount == 2) {
         return true;
       } else {
         return false;
       }
     }
-    if (isMiddle) {
-      if (matrix[i][j].tapCount == 3) {
-        return true;
-      } else {
-        return false;
-      }
+    if (tempMatrix[i][j].tapCount == 3) {
+      return true;
+    } else {
+      return false;
     }
-    console.log("something went wrong at poppable function");
-    return false;
   };
   useEffect(() => {
     setGuiBoard(createBoard(matrix));
@@ -195,8 +195,18 @@ function Game(props) {
       console.log("unmount game");
     };
   }, []);
+  useEffect(() => {
+    console.log("update MATRIX");
 
-  const cornerRow = (i, j) => {
+    return () => {};
+  }, [matrix]);
+  useEffect(() => {
+    console.log("update GUI");
+
+    return () => {};
+  }, [guiBoard]);
+
+  const isCornerRow = (i, j) => {
     if (
       i == 0 ||
       j == 0 ||
@@ -207,7 +217,34 @@ function Game(props) {
     }
     return false;
   };
-  const pop = () => {};
+  const pop = (i, j, tempMatrix, currentPlayer) => {
+    if (
+      i < 0 ||
+      i >= constants.GRID_SIZE ||
+      j < 0 ||
+      j >= constants.GRID_SIZE
+    ) {
+      console.log("beyond the boundaries");
+      return;
+    }
+    if (!poppable(i, j, tempMatrix)) {
+      tempMatrix[i][j].tapCount = tempMatrix[i][j].tapCount + 1;
+      tempMatrix[i][j].occupiedBy = currentPlayer;
+      return false;
+    } else {
+      tempMatrix[i][j].tapCount = 0;
+      tempMatrix[i][j].occupiedBy = constants.NO_PLAYER;
+
+      // up j > 0
+      pop(i, j - 1, tempMatrix, currentPlayer);
+      // right i+1 < constants.grid_size
+      pop(i + 1, j, tempMatrix, currentPlayer);
+      // down  j+1 < constants.grid_size
+      pop(i, j + 1, tempMatrix, currentPlayer);
+      // left i > 0
+      pop(i - 1, j, tempMatrix, currentPlayer);
+    }
+  };
   return (
     <div>
       <Navbar screenName={playerCount + "P Match"} />

@@ -34,3 +34,26 @@
   border-color: white;
   margin: 3px;
 }
+@keyframes poppableShake {
+  0%{
+    transform: rotate(-15deg) scale(1);
+  }
+  25%{
+    transform: rotate(0deg) scale(0.8);
+  }
+  50%{
+    transform: rotate(10deg) scale(1);
+  }
+  75%{
+    transform: rotate(0deg) scale(1.1);
+  }
+  100%{
+    transform: rotate(-15deg) scale(1);
+  }
+}
+.poppable{
+  animation-name: poppableShake;
+  animation-duration: 1s;
+  animation-play-state: running;
+  animation-iteration-count: infinite;
+}

@@ -2,5 +2,9 @@
   height: 30px;
 }
 .legend{
-  width: 150px;
+  display: flex;
+  justify-content: center;
+}
+.legend_table{
+  width: 150px !important;
 }
