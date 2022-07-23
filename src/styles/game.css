@@ -75,3 +75,44 @@
   animation-play-state: running;
   animation-iteration-count: infinite;
 }
+
+@media only screen and (max-width: 480px) {
+  .game{
+    /* flex-direction: column; */
+  }
+}
+@media only screen and (max-width: 1200px) {
+  .game{
+    flex-direction: column-reverse;
+    margin: 0px;
+  }
+  .verticalSection1{
+    width: 100%;
+  }
+  .verticalSection2{
+    width: 100%;
+    display: flex;
+    place-content: center;
+  }
+  .final_winnerName{
+    font-size: 100px;
+  }
+}
+@media only screen and (max-width: 720px) {
+  .cell{
+    width: 40px;
+    height: 40px;
+  }
+  .headsup{
+    margin-right: 100px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .cell{
+    width: 30px;
+    height: 30px;
+  }
+  .headsup{
+    width: 100%;
+  }
+}

@@ -69,7 +69,7 @@ function Menu(props) {
           <FormHelperText>Select board size.</FormHelperText>
         </FormControl>
       </div>
-      <div>
+      <div className="menu__flowControls">
         <button
           style={{ marginRight: "20px" }}
           className="btn btn-primary"

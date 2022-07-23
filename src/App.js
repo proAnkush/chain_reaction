@@ -13,7 +13,7 @@ function App() {
           <Route exact path="/pause" component={Pause} />
           <Route exact path="/game/:playerCount" component={Game} />
           <Route exact path="/final" component={Final} />
-          <Route exact path="/" component={Menu} />
+          <Route path="/" component={Menu} />
         </Switch>
       </BrowserRouter>
     </div>

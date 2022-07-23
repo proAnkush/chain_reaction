@@ -1,5 +1,5 @@
 .final_winnerName{
-  font-size: 500px;
+  font-size: 300px;
   color: black;
   font-weight: bold;
   text-transform: uppercase;
@@ -7,4 +7,22 @@
 .final_winMsg{
   align-self: center;
   font-size: 30px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .final_winnerName{
+    font-size: 100px;
+  }
+}
+
+@media only screen and (max-width: 720px) {
+  .final_winnerName{
+    font-size: 80px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .final_winnerName{
+    font-size: 50px;
+  }
 }
