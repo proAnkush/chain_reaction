@@ -27,6 +27,16 @@ function Game(props) {
     }
     return matrix;
   };
+  const getActivePlayers = (playerCount) => {
+    if (localStorage.getItem("activePlayers") == null) {
+      return constants.PLAYER_COLOR_MAP[playerCount];
+    } else {
+      let tempActivePlayers = JSON.parse(localStorage.getItem("activePlayers"));
+      let r = document.querySelector(":root");
+      r.style.setProperty("--BOARD_BORDER_COLOR", tempActivePlayers[0]);
+      return tempActivePlayers;
+    }
+  };
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(true);
 
   const history = useHistory();
@@ -44,7 +54,7 @@ function Game(props) {
 
   const [guiBoard, setGuiBoard] = useState();
 
-  let activePlayers = constants.PLAYER_COLOR_MAP[playerCount];
+  let activePlayers = getActivePlayers(playerCount);
 
   const [matrix, setMatrix] = useState(() => generateEmptyMatrix());
 
@@ -74,6 +84,7 @@ function Game(props) {
     setGuiBoard(createBoard(matrix));
     checkEndGame(tempMatrix);
     localStorage.setItem("matrix", JSON.stringify(matrix));
+    localStorage.setItem("activePlayers", JSON.stringify(activePlayers));
   };
 
   const checkEndGame = (tempMatrix) => {
