@@ -1,7 +1,6 @@
 {
   "name": "chain",
   "version": "0.1.0",
-  "homepage": "https://proAnkush.github.io/chain-reaction/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.3",
