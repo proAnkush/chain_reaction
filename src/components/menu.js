@@ -16,13 +16,17 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
+import { useHistory } from "react-router-dom";
 function Menu(props) {
   const [playerCount, setPlayerCount] = useState(2);
   const [gridSize, setGridSize] = useState(8);
+  const history = useHistory();
   const startGame = () => {
     localStorage.setItem("playerCount", playerCount);
     localStorage.setItem("gridSize", gridSize);
-    window.location.href = "/game/" + playerCount;
+    localStorage.removeItem("matrix");
+    localStorage.setItem("isGameInProgress", true);
+    history.push("/game/" + playerCount);
   };
   const [helpDialog, setHelpDialog] = useState(false);
   return (

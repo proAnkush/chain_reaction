@@ -7,8 +7,13 @@ import "../styles/board.css";
 import Legend from "./legend";
 import Board from "./board";
 import Headsup from "./headsup";
+import { useHistory } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 function Game(props) {
   const generateEmptyMatrix = () => {
+    if (localStorage.getItem("matrix") != null) {
+      return JSON.parse(localStorage.getItem("matrix"));
+    }
     let matrix = Array(gridSize);
     for (let i = 0; i < gridSize; i++) {
       let row = Array(gridSize);
@@ -22,8 +27,13 @@ function Game(props) {
     }
     return matrix;
   };
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(true);
 
+  const history = useHistory();
   const [headsupMessage, setHeadsupMessage] = useState("Best of Luck!");
+  const [isGameInProgress, setIsGameInProgress] = useState(
+    localStorage.getItem("isGameInProgress")
+  );
   const [playerCount, setPlayerCount] = useState(
     parseInt(localStorage.getItem("playerCount")) || 2
   );
@@ -63,6 +73,7 @@ function Game(props) {
     setMatrix(tempMatrix);
     setGuiBoard(createBoard(matrix));
     checkEndGame(tempMatrix);
+    localStorage.setItem("matrix", JSON.stringify(matrix));
   };
 
   const checkEndGame = (tempMatrix) => {
@@ -115,7 +126,7 @@ function Game(props) {
 
   const endGame = (winningColor) => {
     localStorage.setItem("winner", winningColor);
-    window.location.href = "/final";
+    history.push("/final");
   };
 
   const createBoard = (tempMatrix) => {
@@ -221,20 +232,30 @@ function Game(props) {
   return (
     <div>
       <Navbar screenName={playerCount + "P Match"} />
-      <div className="game">
-        <div className="verticalSection1">
-          <Board
-            matrix={matrix}
-            createBoard={createBoard}
-            guiBoard={guiBoard}
-            elevation={3}
-          />
-          <Headsup message={headsupMessage} />
+      {isGameInProgress && (
+        <div className="game">
+          <div className="verticalSection1">
+            <Board
+              matrix={matrix}
+              createBoard={createBoard}
+              guiBoard={guiBoard}
+              elevation={3}
+            />
+            <Headsup message={headsupMessage} />
+          </div>
+          <div className="verticalSection2">
+            <Legend playerCount={playerCount} />
+          </div>
         </div>
-        <div className="verticalSection2">
-          <Legend playerCount={playerCount} />
-        </div>
-      </div>
+      )}
+      {!isGameInProgress && (
+        <Snackbar
+          open={isSnackbarOpen}
+          autoHideDuration={6000}
+          onClose={() => setIsSnackbarOpen(false)}
+          message={"No game in progress currently!"}
+        />
+      )}
     </div>
   );
 }

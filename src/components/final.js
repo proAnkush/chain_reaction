@@ -3,10 +3,21 @@ import Navbar from "./navbar";
 import "../styles/final.css";
 import constants from "../constants.json";
 import { Snackbar } from "@mui/material";
+import { useHistory } from "react-router-dom";
 function Final(props) {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(true);
+  let history = useHistory();
+  const cleanup = () => {
+    console.log(localStorage.getItem("gridSize"));
+    localStorage.removeItem("matrix");
+    localStorage.removeItem("playerCount");
+    localStorage.removeItem("gridSize");
+    localStorage.removeItem("isGameInProgress");
+    console.log(localStorage.getItem("gridSize"));
+  };
   return (
     <div>
+      {cleanup()}
       <Navbar screenName="Finish" />
       <div className="final_msgBox">
         <span className="final_winnerName">
@@ -22,7 +33,7 @@ function Final(props) {
         />
       </div>
       <button
-        onClick={() => (window.location.href = "/")}
+        onClick={() => history.push("/final")}
         className="btn btn-primary"
       >
         Main Menu
