@@ -32,10 +32,7 @@ function Final(props) {
           }
         />
       </div>
-      <button
-        onClick={() => history.push("/final")}
-        className="btn btn-primary"
-      >
+      <button onClick={() => history.push("/")} className="btn btn-primary">
         Main Menu
       </button>
     </div>
