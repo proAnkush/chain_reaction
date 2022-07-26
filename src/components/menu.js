@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./navbar.js";
 import bootstrap from "bootstrap";
 import "../styles/menu.css";
@@ -25,10 +25,19 @@ function Menu(props) {
     localStorage.setItem("playerCount", playerCount);
     localStorage.setItem("gridSize", gridSize);
     localStorage.removeItem("matrix");
+    localStorage.removeItem("activePlayers");
     localStorage.setItem("isGameInProgress", true);
-    history.push("/game/" + playerCount);
+    // history.push("/game/" + playerCount);
+    window.location.href = "/game/" + playerCount;
   };
   const [helpDialog, setHelpDialog] = useState(false);
+  useEffect(() => {
+    localStorage.removeItem("matrix");
+    localStorage.removeItem("activePlayers");
+    localStorage.setItem("isGameInProgress", false);
+    return () => {};
+  }, []);
+
   return (
     <div>
       <Navbar screenName="Menu" />
@@ -41,6 +50,7 @@ function Menu(props) {
             label="Friends Count"
             value={playerCount}
             onChange={(e) => setPlayerCount(parseInt(e.target.value))}
+            title="Select total players"
           >
             <MenuItem value={2}>2 Friends</MenuItem>
             <MenuItem value={3}>3 Friends</MenuItem>
@@ -62,6 +72,7 @@ function Menu(props) {
             label="Board Size"
             value={gridSize}
             onChange={(e) => setGridSize(parseInt(e.target.value))}
+            title="select board size"
           >
             <MenuItem value={4}>4*4 Grid</MenuItem>
             <MenuItem value={5}>5*5 Grid</MenuItem>
@@ -78,6 +89,15 @@ function Menu(props) {
           style={{ marginRight: "20px" }}
           className="btn btn-primary"
           onClick={() => startGame()}
+          title={
+            "start game with " +
+            playerCount +
+            " players and " +
+            gridSize +
+            " by " +
+            gridSize +
+            " board."
+          }
         >
           Start Game
         </button>
@@ -96,18 +116,19 @@ function Menu(props) {
             <DialogContentText id="alert-dialog-description">
               <em>
                 The objective of Chain Reaction is to take control of the board
-                by eliminating your opponents' orbs.
+                by eliminating your opponents' orbs. <br />
                 <br />
               </em>{" "}
-              Players take it in turns to place occupy cells by their color.
-              Once a cell has reached critical number of taps, the cells explode
-              into the surrounding cells adding an extra count and claiming the
-              cell for the player. A player may only increase mass of their
-              color cell or in a blank cell. As soon as a player looses all
-              their cells they are out of the game.
+              Players take it in turns to occupy cells by their color. Once
+              acell has reached critical number of taps, the cells explode
+              intothe surrounding cells adding an extra count and claiming the
+              cellfor the player. A player may only increase mass of their
+              colorcell or in a blank cell. As soon as a player looses all
+              theircells they are out of the game.
               <ul>
-                <li>Corner tiles explode after 2 clicks</li>
-                <li>Border tiles explode after 3 clicks</li>
+                {" "}
+                <li>Corner tiles explode after 2 clicks</li>{" "}
+                <li>Border tiles explode after 3 clicks</li>{" "}
                 <li>All other tiles explode after 4 clicks</li>
               </ul>
             </DialogContentText>
@@ -117,6 +138,7 @@ function Menu(props) {
               variant="outlined"
               onClick={() => setHelpDialog(false)}
               autoFocus
+              title="I'm Born Ready"
             >
               I'm Ready
             </Button>

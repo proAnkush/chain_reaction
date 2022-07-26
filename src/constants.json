@@ -1,7 +1,7 @@
 {
   "GAME": "Chain Reaction",
   "DEVELOPER": "Ankush Patil",
-  "GRID_SIZE": "6",
+  "GRID_SIZE": "8",
   "PLAYER_COUNT": "2",
   "PLAYER_ONE": "red",
   "PLAYER_TWO": "blue",

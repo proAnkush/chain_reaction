@@ -4,11 +4,11 @@ import Alert from "@mui/material/Alert";
 function Headsup(props) {
   return (
     <div className="headsup">
-      <p className="zm">
-        <Alert variant="outlined" severity="info">
-          {props.message}
-        </Alert>
-      </p>
+      {/* <p className="zm"> */}
+      <Alert className="zm" variant="outlined" severity="info">
+        {props.message}
+      </Alert>
+      {/* </p> */}
     </div>
   );
 }

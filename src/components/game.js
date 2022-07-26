@@ -11,7 +11,13 @@ import { useHistory } from "react-router-dom";
 import { Snackbar } from "@mui/material";
 function Game(props) {
   const generateEmptyMatrix = () => {
-    if (localStorage.getItem("matrix") != null) {
+    if (
+      localStorage.getItem("matrix") != null &&
+      JSON.parse(localStorage.getItem("matrix")).length ==
+        localStorage.getItem("gridSize") &&
+      localStorage.getItem("activePlayers") != null
+    ) {
+      setHeadsupMessage("Restored game from previous session. Enjoy!");
       return JSON.parse(localStorage.getItem("matrix"));
     }
     let matrix = Array(gridSize);
@@ -25,6 +31,8 @@ function Game(props) {
       }
       matrix[i] = row;
     }
+    localStorage.removeItem("activePlayers");
+    localStorage.removeItem("matrix");
     return matrix;
   };
   const getActivePlayers = (playerCount) => {
@@ -41,9 +49,13 @@ function Game(props) {
 
   const history = useHistory();
   const [headsupMessage, setHeadsupMessage] = useState("Best of Luck!");
+  const checkIfGameInProgress = () => {
+    return localStorage.getItem("isGameInProgress") == "true";
+  };
   const [isGameInProgress, setIsGameInProgress] = useState(
-    localStorage.getItem("isGameInProgress")
+    checkIfGameInProgress
   );
+
   const [playerCount, setPlayerCount] = useState(
     parseInt(localStorage.getItem("playerCount")) || 2
   );
@@ -69,11 +81,11 @@ function Game(props) {
       return;
     }
     let tempMatrix = [...matrix];
-    console.log(activePlayers);
+    // console.log(activePlayers);
     let currentPlayer = activePlayers.shift();
     activePlayers.push(currentPlayer);
-    console.log(currentPlayer);
-    console.log(activePlayers.length, activePlayers.length);
+    // console.log(currentPlayer);
+    // console.log(activePlayers.length, activePlayers.length);
     if (poppable(i, j, tempMatrix)) {
       pop(i, j, tempMatrix, currentPlayer);
     } else {
@@ -89,21 +101,21 @@ function Game(props) {
 
   const checkEndGame = (tempMatrix) => {
     if (firstCycle < playerCount) {
-      console.log(firstCycle);
+      // console.log(firstCycle);
       firstCycle++;
       let r = document.querySelector(":root");
       r.style.setProperty("--BOARD_BORDER_COLOR", activePlayers[0]);
       return false;
     }
-    console.log("check end game");
+    // console.log("check end game");
     let playerColors = [...activePlayers];
     let playerOccupiedArea = {};
     for (let i = 0; i < playerColors.length; i++) {
-      console.log("1");
+      // console.log("1");
       let color = playerColors[i];
       playerOccupiedArea[color] = 0;
     }
-    console.log(playerOccupiedArea);
+    // console.log(playerOccupiedArea);
     for (let i = 0; i < tempMatrix.length; i++) {
       for (let j = 0; j < tempMatrix.length; j++) {
         if (playerColors[tempMatrix[i][j].occupiedBy] != "white") {
@@ -112,16 +124,16 @@ function Game(props) {
         }
       }
     }
-    console.log(playerOccupiedArea);
-    console.log("2");
+    // console.log(playerOccupiedArea);
+    // console.log("2");
     for (let i = 0; i < playerColors.length; i++) {
       let color = playerColors[i];
       if (playerOccupiedArea[color] == 0) {
         eliminatePlayer(color);
       }
     }
-    console.log(activePlayers);
-    console.log("2");
+    // console.log(activePlayers);
+    // console.log("2");
 
     let r = document.querySelector(":root");
     r.style.setProperty("--BOARD_BORDER_COLOR", activePlayers[0]);
@@ -153,7 +165,7 @@ function Game(props) {
       let row = tempMatrix[i];
       if (row.length !== parseInt(gridSize)) return;
       let guiRow = (
-        <div>
+        <div key={uuidv4().toString()}>
           {row.map((item, j) => (
             <button
               key={uuidv4().toString()}
@@ -210,7 +222,7 @@ function Game(props) {
   };
   useEffect(() => {
     setGuiBoard(createBoard(matrix));
-
+    // console.log(activePlayers);
     return () => {
       console.log("unmount game");
     };
